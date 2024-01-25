@@ -1,4 +1,4 @@
-import { LinearProgress, makeStyles, Typography } from "@material-ui/core";
+import { Button, LinearProgress, makeStyles, Typography } from "@material-ui/core";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -7,17 +7,76 @@ import CoinInfo from "../components/CoinInfo";
 import { SingleCoin } from "../config/api";
 import { numberWithCommas } from "../components/CoinsTable";
 import { CryptoState } from "../CryptoContext";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
+
+//use params is ised to fetch urls
+//in our case we will use it to fetch coin ids for perticular coin pages
 const CoinPage = () => {
   const { id } = useParams();
   const [coin, setCoin] = useState();
 
-  const { currency, symbol } = CryptoState();
+  const { currency, symbol ,user,watchlist,setAlert} = CryptoState();
 
   const fetchCoin = async () => {
     const { data } = await axios.get(SingleCoin(id));
 
     setCoin(data);
+  };
+
+
+
+
+
+
+
+  const inWatchlist = watchlist ? watchlist.includes(coin?.id) : false;
+
+  const addToWatchlist = async () => {
+    const coinRef = doc(db, "watchlist", user.uid);
+    try {
+      await setDoc(
+        coinRef,
+        { coins: watchlist ? [...watchlist, coin?.id] : [coin?.id] },
+        { merge: true }
+      );
+
+      setAlert({
+        open: true,
+        message: `${coin.name} Added to the Watchlist !`,
+        type: "success",
+      });
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: error.message,
+        type: "error",
+      });
+    }
+  };
+
+  const removeFromWatchlist = async () => {
+    const coinRef = doc(db, "watchlist", user.uid);
+    try {
+      await setDoc(
+        coinRef,
+        { coins: watchlist.filter((wish) => wish !== coin?.id) },
+        { merge: true }
+      );
+
+      setAlert({
+        open: true,
+        message: `${coin.name} Removed from the Watchlist !`,
+        type: "success",
+      });
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: error.message,
+        type: "error",
+      });
+    }
   };
 
   useEffect(() => {
@@ -62,11 +121,14 @@ const CoinPage = () => {
       padding: 25,
       paddingTop: 10,
       width: "100%",
-      [theme.breakpoints.down("md")]: {
-        display: "flex",
-        justifyContent: "space-around",
-      },
+
+
       [theme.breakpoints.down("sm")]: {
+        flexDirection:"column",
+        alignItems:"center"
+      },
+      [theme.breakpoints.down("md")]: {
+        display:"flex",
         flexDirection: "column",
         alignItems: "center",
       },
@@ -76,10 +138,13 @@ const CoinPage = () => {
     },
   }));
 
+  
+
   const classes = useStyles();
 
   if (!coin) return <LinearProgress style={{ backgroundColor: "gold" }} />;
-
+//this page will have two sections one is sidebar for showing info about coin anf another sidebar for chart of that coin
+//we will create another component coininfo
   return (
     <div className={classes.container}>
       <div className={classes.sidebar}>
@@ -148,6 +213,23 @@ const CoinPage = () => {
               M
             </Typography>
           </span>
+
+          {user &&(
+            <Button
+            size="large"
+            color="primary"
+            variant="contained"
+            fullWidth
+            onClick={inWatchlist? removeFromWatchlist : addToWatchlist}
+            style={{
+            backgroundColor:inWatchlist? "#ff0000":"0D3383",
+            }}
+            >
+            {inWatchlist ? "Remove from Watchlist!": "Add to Your Watchlist!"}
+            
+              
+            </Button>
+          )}
         </div>
       </div>
       <CoinInfo coin={coin} />

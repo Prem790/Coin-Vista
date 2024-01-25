@@ -18,10 +18,24 @@ const Carousel = () => {
     setTrending(data);
   };
 
+   //we have created styles for our carousel ,created some space now we have to fetch api uisng axios to fetch endpoints of api.
+ //first one is trending coins in carousel mode
+ //in get ethod we will give trending coins endpoint saved in api.js and in trendingcoins currency has to be given that will be imported from context api
+
+
+     //useSate snippet to use trending coins state and fetch data and display everytime we change currency
+
   useEffect(() => {
     fetchTrendingCoins();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currency]);
+  }, [currency]);// currency is a dependency here
+
+   // fetchTrendingCoins is a dependency here
+    
+//the carousel effect is called react alice carosel and it will come from react.download this effect and use it
+
+//all items to display will come from trending state
+
 
   const useStyles = makeStyles((theme) => ({
     carousel: {
@@ -35,7 +49,7 @@ const Carousel = () => {
       alignItems: "center",
       cursor: "pointer",
       textTransform: "uppercase",
-      color: "white",
+      color: "gold",
     },
   }));
 
@@ -69,6 +83,10 @@ const Carousel = () => {
           {symbol} {numberWithCommas(coin?.current_price.toFixed(2))}
         </span>
       </Link>
+
+       //nbsp is used to provide space between item and text
+        //tofixed meanstwo display 2 decimal places only
+        //numberWithCommas is a fucntion we have made.its a regex string copied from google to display commas correctly.
     );
   });
 
@@ -97,5 +115,6 @@ const Carousel = () => {
     </div>
   );
 };
-
+//responsive means how many items we want to see in one tome
+//if size is between 0 to 512 px we want to see 2 items otherwise 4
 export default Carousel;

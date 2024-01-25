@@ -26,12 +26,12 @@ export function numberWithCommas(x) {
 }
 
 export default function CoinsTable() {
-  const [coins, setCoins] = useState([]);
-  const [loading, setLoading] = useState(false);
+
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  //intial value of page will be one 
 
-  const { currency, symbol } = CryptoState();
+  const { currency, symbol,coins,loading,fetchCoins } = CryptoState();
 
   const useStyles = makeStyles({
     row: {
@@ -61,14 +61,7 @@ export default function CoinsTable() {
     },
   });
 
-  const fetchCoins = async () => {
-    setLoading(true);
-    const { data } = await axios.get(CoinList(currency));
-    console.log(data);
 
-    setCoins(data);
-    setLoading(false);
-  };
 
   useEffect(() => {
     fetchCoins();
@@ -88,9 +81,9 @@ export default function CoinsTable() {
       <Container style={{ textAlign: "center" }}>
         <Typography
           variant="h4"
-          style={{ margin: 18, fontFamily: "Montserrat" }}
+          style={{margin: 18, fontFamily: "Montserrat" }}
         >
-          Cryptocurrency Prices by Market Cap
+          Cryptocurrency Prices by Market Cap.!
         </Typography>
         <TextField
           label="Search For a Crypto Currency.."
@@ -122,9 +115,10 @@ export default function CoinsTable() {
               </TableHead>
 
               <TableBody>
+              
                 {handleSearch()
                   .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                  .map((row) => {
+                  .map((row) => {    
                     const profit = row.price_change_percentage_24h > 0;
                     return (
                       <TableRow
@@ -132,12 +126,14 @@ export default function CoinsTable() {
                         className={classes.row}
                         key={row.name}
                       >
+
                         <TableCell
                           component="th"
                           scope="row"
                           style={{
                             display: "flex",
                             gap: 15,
+                            color:"gold"
                           }}
                         >
                           <img
@@ -152,7 +148,7 @@ export default function CoinsTable() {
                             <span
                               style={{
                                 textTransform: "uppercase",
-                                fontSize: 22,
+                               fontSize: 22,
                               }}
                             >
                               {row.symbol}
