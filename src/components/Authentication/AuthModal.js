@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 export default function AuthModal() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const { setAlert} = CryptoState();
+  
 
   const handleOpen = () => {
     setOpen(true);
