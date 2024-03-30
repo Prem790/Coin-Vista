@@ -7,7 +7,7 @@ import { AppBar, Box, Button, Tab, Tabs } from '@material-ui/core';
 import Login from './Login';
 import Signup from './Signup';
 import GoogleButton from 'react-google-button';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth';
 import  { CryptoState } from '../../CryptoContext';
 import { auth } from '../../firebase';
 
@@ -58,6 +58,8 @@ export default function AuthModal() {
   //signup-1
 
   //we will use googleauthProvider from firebase for google authentication
+
+  const {setAlert}=CryptoState();
 
   const googleProvider = new GoogleAuthProvider()
 
